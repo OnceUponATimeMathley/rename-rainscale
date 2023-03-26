@@ -2,7 +2,7 @@ import requests
 import config
 
 
-def handle_model_type(url_model_type, url_model_group, headers, model_type, model_groups):
+def handle_model_group(url_model_type, url_model_group, headers, model_type, model_groups):
     results = []
     for model_group in model_groups:
         response = requests.get(url_model_type, headers=headers, params={'name': model_type}).json()['results']
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     headers = {'Authorization': token}
     model_type = config.MODEL_TYPE
     model_groups = config.MODEL_GROUP
-    results = handle_model_type(url_model_type, url_model_group, 
+    results = handle_model_group(url_model_type, url_model_group, 
                                  headers, model_type, model_groups)
     
     for response in results:
