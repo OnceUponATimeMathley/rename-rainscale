@@ -1,4 +1,5 @@
 import requests
+import asyncio
 
 def get_model_labels(url, headers, labels, shape_type_mappings):
     params = {}
@@ -13,7 +14,6 @@ def get_model_labels(url, headers, labels, shape_type_mappings):
         # make the API request with the current page number
         params['page'] = page
         response = requests.get(url, headers=headers, params=params)
-
         # check if there are no more pages to retrieve
         if not response.json()['next']:
             break
@@ -29,7 +29,8 @@ def get_model_labels(url, headers, labels, shape_type_mappings):
     label_ids = [label_info["id"] for label_info in all_labels]
     return label_ids
 
-
+async def get_model_labels_async(url, headers, labels, shape_type_mappings):
+    return await asyncio.to_thread(get_model_labels, url, headers, labels, shape_type_mappings)
 
 
 
