@@ -17,12 +17,15 @@ async def insert_data(baseSettings: BaseSettings, model_info: ModelInfo):
     labels, shape_type_mappings = model_info.getLabelShapeMapping()
     model_name = model_info.getModelName()
     model_types = model_info.getModelTypes()
+    gpu_usage = model_info.getGPUUsage()
+    deploy_script = model_info.getDeployScript()
+
     model_types, model_groups = model_info.getModelTypeGroupMapping()
     print("RUN", model_name)
     await run_sequence(
         handle_labels(url_label, headers, labels, shape_type_mappings),
         handle_model(url_label, url_model, headers, labels, 
-                             shape_type_mappings, model_name),
+                             shape_type_mappings, model_name, gpu_usage, deploy_script),
         handle_model_types(url_model, url_model_type, 
                                  headers, model_name, model_types),
         handle_model_groups(url_model_type, url_model_group, 
@@ -35,6 +38,7 @@ async def insert_data(baseSettings: BaseSettings, model_info: ModelInfo):
 async def main():
     file_path = './general/configs.yaml'
     baseSettings, model_objs = getListModelInfo(file_path)
+
     begin = time.perf_counter()
     await run_parallel(*[insert_data(baseSettings, model_info) 
                   for model_info in model_objs])

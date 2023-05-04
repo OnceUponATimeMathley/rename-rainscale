@@ -1,6 +1,6 @@
 settings:
-  ADMIN_TOKEN: 'b518d556fc3a15521c31bac604b0be203245f791'
-  BASE_URL: 'http://localhost:3000/'
+  ADMIN_TOKEN: 'd9ec875555fa1a0452b1c2cc4eff7da202505079'
+  BASE_URL: 'http://113.160.226.174:50004/'
   DJANGO_LABEL_URL: 'api/ai-labels'
   DJANGO_MODEL_URL: 'api/ai-models' 
   DJANGO_MODEL_TYPE_URL: 'api/ai-model-types'
@@ -8,7 +8,7 @@ settings:
 
 
 spec:
-  - modelName: "YOLOv7"
+  - modelName: "yolov7"
     labels: [
       {'name': 'person', 'shapeType': 'rectangle'},
       {'name': 'bicycle', 'shapeType': 'rectangle'},
@@ -95,9 +95,21 @@ spec:
       - name: "Common Object Detection (Dataset A)"
         modelGroups:
           - "Bounding Box Object Detection"
+    gpu_usage: 0
+    deploy_script: |
+        cd /ssd1/lelong/backup;
+        IMAGE_NAME=cvat.yolov7
+        TAG_NAME=latest
+        NUCLIO_PROJECT_NAME=cvat
+        if [[ $(docker images -q ${IMAGE_NAME}:${TAG_NAME} 2> /dev/null) == "" ]]; then
+            cd vbpo/yolov7/nuclio;
+            docker build -t ${IMAGE_NAME}:${TAG_NAME} .;
+        fi;
+        cd /ssd1/lelong/backup;
+        ./nuctl deploy yolov7 --run-image ${IMAGE_NAME}:${TAG_NAME} -f ./vbpo/yolov7/nuclio/function.yaml --project-name ${NUCLIO_PROJECT_NAME};
 
   
-  - modelName: "Oriented RCNN"
+  - modelName: "combine-licence-plate-detection"
     labels: [
       {'name': '1', 'shapeType': 'rectangle'},
       {'name': '2', 'shapeType': 'rectangle'},
@@ -128,15 +140,50 @@ spec:
       {'name': 'X', 'shapeType': 'rectangle'},
       {'name': 'Y', 'shapeType': 'rectangle'},
       {'name': 'Z', 'shapeType': 'rectangle'},
-      {'name': '0', 'shapeType': 'rectangle'}
+      {'name': '0', 'shapeType': 'rectangle'},
+      {'name': 'licensePlates', 'shapeType': 'rectangle'}
     ]
     modelTypes:
       - name: "License Plate Detection (Dataset D)"
         modelGroups:
           - "Bounding Box Object Detection"
+    gpu_usage: 0
+    deploy_script: |
+        cd /ssd1/lelong/backup;
+        IMAGE_NAME=cvat.combine-licence-plate-detection
+        TAG_NAME=latest
+        NUCLIO_PROJECT_NAME=cvat
+        if [[ $(docker images -q ${IMAGE_NAME}:${TAG_NAME} 2> /dev/null) == "" ]]; then
+            cd vbpo/combine-licence-plate-detection/nuclio;
+            docker build -t ${IMAGE_NAME}:${TAG_NAME} .;
+        fi;
+        cd /ssd1/lelong/backup;
+        ./nuctl deploy combine-licence-plate-detection --run-image ${IMAGE_NAME}:${TAG_NAME} -f ./vbpo/combine-licence-plate-detection/nuclio/function.yaml --project-name ${NUCLIO_PROJECT_NAME};
 
 
-  - modelName: "CLRNet"
+  - modelName: "license-plate-detection"
+    labels: [
+      {'name': 'licensePlates', 'shapeType': 'rectangle'}
+    ]
+    modelTypes:
+      - name: "License Plate Detection (Dataset M)"
+        modelGroups:
+          - "Bounding Box Object Detection"
+    gpu_usage: 0
+    deploy_script: |
+        cd /ssd1/lelong/backup;
+        IMAGE_NAME=cvat.license-plate-detection
+        TAG_NAME=latest
+        NUCLIO_PROJECT_NAME=cvat
+        if [[ $(docker images -q ${IMAGE_NAME}:${TAG_NAME} 2> /dev/null) == "" ]]; then
+            cd vbpo/license-plate-detection/nuclio;
+            docker build -t ${IMAGE_NAME}:${TAG_NAME} .;
+        fi;
+        cd /ssd1/lelong/backup;
+        ./nuctl deploy license-plate-detection --run-image ${IMAGE_NAME}:${TAG_NAME} -f ./vbpo/license-plate-detection/nuclio/function.yaml --project-name ${NUCLIO_PROJECT_NAME};
+
+
+  - modelName: "clrnet"
     labels: [
       {'name': 'line', 'shapeType': 'rectangle'}
     ]
@@ -144,9 +191,15 @@ spec:
       - name: "Road Lane Line Detection (Dataset G)"
         modelGroups:
           - "Polyline Detection"
+    gpu_usage: 0
+    deploy_script: |
+        cd /ssd1/lelong/backup;
+        PROJECT_NAME=cvat
+        ./nuctl deploy --project-name ${PROJECT_NAME} --path "./vbpo/clrnet/nuclio/" --platform local;
 
 
-  - modelName: "RetinaFace"
+
+  - modelName: "retinaface"
     labels: [
       {'name': 'left eye', 'shapeType': 'points'},
       {'name': 'right eye', 'shapeType': 'points'},
@@ -160,9 +213,14 @@ spec:
         modelGroups:
           - "Bounding Box Object Detection"
           - "Landmark Point Detection"
+    gpu_usage: 0
+    deploy_script: |
+        cd /ssd1/lelong/backup;
+        PROJECT_NAME=cvat
+        ./nuctl deploy --project-name ${PROJECT_NAME} --path "./vbpo/retina/nuclio/" --platform local;
 
 
-  - modelName: "Mask Transfiner"
+  - modelName: "mask.transfiner"
     labels: [
       {'name': 'electronic', 'shapeType': 'polygon'},
       {'name': 'appliance', 'shapeType': 'polygon'},
@@ -223,526 +281,13 @@ spec:
       - name: "Common Instance Segmentation (Dataset E)"
         modelGroups:
           - "Instance Segmentation"
+    gpu_usage: 0
+    deploy_script: |
+        cd /ssd1/lelong/backup;
+        PROJECT_NAME=cvat
+        ./nuctl deploy --project-name ${PROJECT_NAME} --path "./vbpo/transfiner/nuclio/" --platform local;
 
-
-  - modelName: "STEGO"
-    labels: [
-      {'name': 'electronic', 'shapeType': 'polygon'},
-      {'name': 'appliance', 'shapeType': 'polygon'},
-      {'name': 'food', 'shapeType': 'polygon'},
-      {'name': 'furniture', 'shapeType': 'polygon'},
-      {'name': 'indoor', 'shapeType': 'polygon'},
-      {'name': 'kitchen', 'shapeType': 'polygon'},
-      {'name': 'accessory', 'shapeType': 'polygon'},
-      {'name': 'animal', 'shapeType': 'polygon'},
-      {'name': 'outdoor', 'shapeType': 'polygon'},
-      {'name': 'person', 'shapeType': 'polygon'},
-      {'name': 'sports', 'shapeType': 'polygon'},
-      {'name': 'vehicle', 'shapeType': 'polygon'},
-      {'name': 'ceiling', 'shapeType': 'polygon'},
-      {'name': 'floor', 'shapeType': 'polygon'},
-      {'name': 'food_2', 'shapeType': 'polygon'},
-      {'name': 'furniture_2', 'shapeType': 'polygon'},
-      {'name': 'rawmaterial', 'shapeType': 'polygon'},
-      {'name': 'textile', 'shapeType': 'polygon'},
-      {'name': 'wall', 'shapeType': 'polygon'},
-      {'name': 'window', 'shapeType': 'polygon'},
-      {'name': 'building', 'shapeType': 'polygon'},
-      {'name': 'ground', 'shapeType': 'polygon'},
-      {'name': 'plant', 'shapeType': 'polygon'},
-      {'name': 'sky', 'shapeType': 'polygon'},
-      {'name': 'solid', 'shapeType': 'polygon'},
-      {'name': 'structural', 'shapeType': 'polygon'},
-      {'name': 'water', 'shapeType': 'polygon'},
-      {'name': 'electronic', 'shapeType': 'mask'},
-      {'name': 'appliance', 'shapeType': 'mask'},
-      {'name': 'food', 'shapeType': 'mask'},
-      {'name': 'furniture', 'shapeType': 'mask'},
-      {'name': 'indoor', 'shapeType': 'mask'},
-      {'name': 'kitchen', 'shapeType': 'mask'},
-      {'name': 'accessory', 'shapeType': 'mask'},
-      {'name': 'animal', 'shapeType': 'mask'},
-      {'name': 'outdoor', 'shapeType': 'mask'},
-      {'name': 'person', 'shapeType': 'mask'},
-      {'name': 'sports', 'shapeType': 'mask'},
-      {'name': 'vehicle', 'shapeType': 'mask'},
-      {'name': 'ceiling', 'shapeType': 'mask'},
-      {'name': 'floor', 'shapeType': 'mask'},
-      {'name': 'food_2', 'shapeType': 'mask'},
-      {'name': 'furniture_2', 'shapeType': 'mask'},
-      {'name': 'rawmaterial', 'shapeType': 'mask'},
-      {'name': 'textile', 'shapeType': 'mask'},
-      {'name': 'wall', 'shapeType': 'mask'},
-      {'name': 'window', 'shapeType': 'mask'},
-      {'name': 'building', 'shapeType': 'mask'},
-      {'name': 'ground', 'shapeType': 'mask'},
-      {'name': 'plant', 'shapeType': 'mask'},
-      {'name': 'sky', 'shapeType': 'mask'},
-      {'name': 'solid', 'shapeType': 'mask'},
-      {'name': 'structural', 'shapeType': 'mask'},
-      {'name': 'water', 'shapeType': 'mask'}
-    ]
-    modelTypes:
-      - name: "Click point mode of semantic model (Dataset C)"
-        modelGroups:
-          - "Click Point Semantic"
-
-
-  - modelName: "BEiT"
-    labels: [
-      {'name': 'road', 'shapeType': 'polygon'},
-      {'name': 'sidewalk', 'shapeType': 'polygon'},
-      {'name': 'building', 'shapeType': 'polygon'},
-      {'name': 'wall', 'shapeType': 'polygon'},
-      {'name': 'fence', 'shapeType': 'polygon'},
-      {'name': 'pole', 'shapeType': 'polygon'},
-      {'name': 'traffic light car', 'shapeType': 'polygon'},
-      {'name': 'traffic light pedestrian', 'shapeType': 'polygon'},
-      {'name': 'traffic light other', 'shapeType': 'polygon'},
-      {'name': 'traffic sign stop', 'shapeType': 'polygon'},
-      {'name': 'traffic sign other', 'shapeType': 'polygon'},
-      {'name': 'vegetation', 'shapeType': 'polygon'},
-      {'name': 'terrain', 'shapeType': 'polygon'},
-      {'name': 'sky', 'shapeType': 'polygon'},
-      {'name': 'person', 'shapeType': 'polygon'},
-      {'name': 'rider', 'shapeType': 'polygon'},
-      {'name': 'car', 'shapeType': 'polygon'},
-      {'name': 'truck', 'shapeType': 'polygon'},
-      {'name': 'bus', 'shapeType': 'polygon'},
-      {'name': 'specific car', 'shapeType': 'polygon'},
-      {'name': 'train', 'shapeType': 'polygon'},
-      {'name': 'motorcycle', 'shapeType': 'polygon'},
-      {'name': 'bicycle', 'shapeType': 'polygon'},
-      {'name': 'line solid white - ego lane', 'shapeType': 'polygon'},
-      {'name': 'line solid yellow - ego lane', 'shapeType': 'polygon'},
-      {'name': 'line solid other - ego lane', 'shapeType': 'polygon'},
-      {'name': 'line dashed white - ego lane', 'shapeType': 'polygon'},
-      {'name': 'line dashed yellow - ego lane', 'shapeType': 'polygon'},
-      {'name': 'line dashed other - ego lane', 'shapeType': 'polygon'},
-      {'name': 'line solid white - other lane', 'shapeType': 'polygon'},
-      {'name': 'line solid yellow - other lane', 'shapeType': 'polygon'},
-      {'name': 'line solid other - other lane', 'shapeType': 'polygon'},
-      {'name': 'line dashed white - other lane', 'shapeType': 'polygon'},
-      {'name': 'line dashed yellow - other lane', 'shapeType': 'polygon'},
-      {'name': 'line dashed other - other lane', 'shapeType': 'polygon'},
-      {'name': 'road marking crosswalk', 'shapeType': 'polygon'},
-      {'name': 'road marking stopline', 'shapeType': 'polygon'},
-      {'name': 'road marking arrow', 'shapeType': 'polygon'},
-      {'name': 'road marking diamond', 'shapeType': 'polygon'},
-      {'name': 'road marking text stop', 'shapeType': 'polygon'},
-      {'name': 'road marking text other', 'shapeType': 'polygon'},
-      {'name': 'road marking additional line', 'shapeType': 'polygon'},
-      {'name': 'road marking zebla zone', 'shapeType': 'polygon'},
-      {'name': 'road marking other', 'shapeType': 'polygon'},
-      {'name': 'animal', 'shapeType': 'polygon'},
-      {'name': 'gate bar', 'shapeType': 'polygon'},
-      {'name': 'tunnel', 'shapeType': 'polygon'},
-      {'name': 'nature', 'shapeType': 'polygon'},
-      {'name': 'smoke', 'shapeType': 'polygon'},
-      {'name': 'dynamic', 'shapeType': 'polygon'},
-      {'name': 'static on road', 'shapeType': 'polygon'},
-      {'name': 'static in air', 'shapeType': 'polygon'},
-      {'name': 'invisible', 'shapeType': 'polygon'},
-      {'name': 'splash', 'shapeType': 'polygon'},
-      {'name': 'cone', 'shapeType': 'polygon'},
-      {'name': 'road', 'shapeType': 'mask'},
-      {'name': 'sidewalk', 'shapeType': 'mask'},
-      {'name': 'building', 'shapeType': 'mask'},
-      {'name': 'wall', 'shapeType': 'mask'},
-      {'name': 'fence', 'shapeType': 'mask'},
-      {'name': 'pole', 'shapeType': 'mask'},
-      {'name': 'traffic light car', 'shapeType': 'mask'},
-      {'name': 'traffic light pedestrian', 'shapeType': 'mask'},
-      {'name': 'traffic light other', 'shapeType': 'mask'},
-      {'name': 'traffic sign stop', 'shapeType': 'mask'},
-      {'name': 'traffic sign other', 'shapeType': 'mask'},
-      {'name': 'vegetation', 'shapeType': 'mask'},
-      {'name': 'terrain', 'shapeType': 'mask'},
-      {'name': 'sky', 'shapeType': 'mask'},
-      {'name': 'person', 'shapeType': 'mask'},
-      {'name': 'rider', 'shapeType': 'mask'},
-      {'name': 'car', 'shapeType': 'mask'},
-      {'name': 'truck', 'shapeType': 'mask'},
-      {'name': 'bus', 'shapeType': 'mask'},
-      {'name': 'specific car', 'shapeType': 'mask'},
-      {'name': 'train', 'shapeType': 'mask'},
-      {'name': 'motorcycle', 'shapeType': 'mask'},
-      {'name': 'bicycle', 'shapeType': 'mask'},
-      {'name': 'line solid white - ego lane', 'shapeType': 'mask'},
-      {'name': 'line solid yellow - ego lane', 'shapeType': 'mask'},
-      {'name': 'line solid other - ego lane', 'shapeType': 'mask'},
-      {'name': 'line dashed white - ego lane', 'shapeType': 'mask'},
-      {'name': 'line dashed yellow - ego lane', 'shapeType': 'mask'},
-      {'name': 'line dashed other - ego lane', 'shapeType': 'mask'},
-      {'name': 'line solid white - other lane', 'shapeType': 'mask'},
-      {'name': 'line solid yellow - other lane', 'shapeType': 'mask'},
-      {'name': 'line solid other - other lane', 'shapeType': 'mask'},
-      {'name': 'line dashed white - other lane', 'shapeType': 'mask'},
-      {'name': 'line dashed yellow - other lane', 'shapeType': 'mask'},
-      {'name': 'line dashed other - other lane', 'shapeType': 'mask'},
-      {'name': 'road marking crosswalk', 'shapeType': 'mask'},
-      {'name': 'road marking stopline', 'shapeType': 'mask'},
-      {'name': 'road marking arrow', 'shapeType': 'mask'},
-      {'name': 'road marking diamond', 'shapeType': 'mask'},
-      {'name': 'road marking text stop', 'shapeType': 'mask'},
-      {'name': 'road marking text other', 'shapeType': 'mask'},
-      {'name': 'road marking additional line', 'shapeType': 'mask'},
-      {'name': 'road marking zebla zone', 'shapeType': 'mask'},
-      {'name': 'road marking other', 'shapeType': 'mask'},
-      {'name': 'animal', 'shapeType': 'mask'},
-      {'name': 'gate bar', 'shapeType': 'mask'},
-      {'name': 'tunnel', 'shapeType': 'mask'},
-      {'name': 'nature', 'shapeType': 'mask'},
-      {'name': 'smoke', 'shapeType': 'mask'},
-      {'name': 'dynamic', 'shapeType': 'mask'},
-      {'name': 'static on road', 'shapeType': 'mask'},
-      {'name': 'static in air', 'shapeType': 'mask'},
-      {'name': 'invisible', 'shapeType': 'mask'},
-      {'name': 'splash', 'shapeType': 'mask'},
-      {'name': 'cone', 'shapeType': 'mask'}
-    ]
-    modelTypes:
-      - name: "Click point mode of semantic model (Dataset M)"
-        modelGroups:
-          - "Click Point Semantic"
-
-
-  - modelName: "InSPyReNet"
-    labels: [
-      {'name': 'person', 'shapeType': 'polygon'},
-      {'name': 'bicycle', 'shapeType': 'polygon'},
-      {'name': 'car', 'shapeType': 'polygon'},
-      {'name': 'motorcycle', 'shapeType': 'polygon'},
-      {'name': 'bus', 'shapeType': 'polygon'},
-      {'name': 'train', 'shapeType': 'polygon'},
-      {'name': 'truck', 'shapeType': 'polygon'},
-      {'name': 'boat', 'shapeType': 'polygon'},
-      {'name': 'traffic light', 'shapeType': 'polygon'},
-      {'name': 'fire hydrant', 'shapeType': 'polygon'},
-      {'name': 'stop sign', 'shapeType': 'polygon'},
-      {'name': 'parking meter', 'shapeType': 'polygon'},
-      {'name': 'bench', 'shapeType': 'polygon'},
-      {'name': 'bird', 'shapeType': 'polygon'},
-      {'name': 'cat', 'shapeType': 'polygon'},
-      {'name': 'dog', 'shapeType': 'polygon'},
-      {'name': 'horse', 'shapeType': 'polygon'},
-      {'name': 'sheep', 'shapeType': 'polygon'},
-      {'name': 'cow', 'shapeType': 'polygon'},
-      {'name': 'elephant', 'shapeType': 'polygon'},
-      {'name': 'bear', 'shapeType': 'polygon'},
-      {'name': 'zebra', 'shapeType': 'polygon'},
-      {'name': 'giraffe', 'shapeType': 'polygon'},
-      {'name': 'backpack', 'shapeType': 'polygon'},
-      {'name': 'umbrella', 'shapeType': 'polygon'},
-      {'name': 'handbag', 'shapeType': 'polygon'},
-      {'name': 'tie', 'shapeType': 'polygon'},
-      {'name': 'suitcase', 'shapeType': 'polygon'},
-      {'name': 'frisbee', 'shapeType': 'polygon'},
-      {'name': 'skis', 'shapeType': 'polygon'},
-      {'name': 'snowboard', 'shapeType': 'polygon'},
-      {'name': 'sports ball', 'shapeType': 'polygon'},
-      {'name': 'kite', 'shapeType': 'polygon'},
-      {'name': 'baseball bat', 'shapeType': 'polygon'},
-      {'name': 'baseball glove', 'shapeType': 'polygon'},
-      {'name': 'skateboard', 'shapeType': 'polygon'},
-      {'name': 'surfboard', 'shapeType': 'polygon'},
-      {'name': 'tennis racket', 'shapeType': 'polygon'},
-      {'name': 'bottle', 'shapeType': 'polygon'},
-      {'name': 'wine glass', 'shapeType': 'polygon'},
-      {'name': 'cup', 'shapeType': 'polygon'},
-      {'name': 'fork', 'shapeType': 'polygon'},
-      {'name': 'knife', 'shapeType': 'polygon'},
-      {'name': 'spoon', 'shapeType': 'polygon'},
-      {'name': 'bowl', 'shapeType': 'polygon'},
-      {'name': 'banana', 'shapeType': 'polygon'},
-      {'name': 'apple', 'shapeType': 'polygon'},
-      {'name': 'sandwich', 'shapeType': 'polygon'},
-      {'name': 'orange', 'shapeType': 'polygon'},
-      {'name': 'broccoli', 'shapeType': 'polygon'},
-      {'name': 'carrot', 'shapeType': 'polygon'},
-      {'name': 'hot dog', 'shapeType': 'polygon'},
-      {'name': 'pizza', 'shapeType': 'polygon'},
-      {'name': 'donut', 'shapeType': 'polygon'},
-      {'name': 'cake', 'shapeType': 'polygon'},
-      {'name': 'chair', 'shapeType': 'polygon'},
-      {'name': 'couch', 'shapeType': 'polygon'},
-      {'name': 'potted plant', 'shapeType': 'polygon'},
-      {'name': 'bed', 'shapeType': 'polygon'},
-      {'name': 'dining table', 'shapeType': 'polygon'},
-      {'name': 'toilet', 'shapeType': 'polygon'},
-      {'name': 'tv', 'shapeType': 'polygon'},
-      {'name': 'laptop', 'shapeType': 'polygon'},
-      {'name': 'mouse', 'shapeType': 'polygon'},
-      {'name': 'remote', 'shapeType': 'polygon'},
-      {'name': 'keyboard', 'shapeType': 'polygon'},
-      {'name': 'cell phone', 'shapeType': 'polygon'},
-      {'name': 'microwave', 'shapeType': 'polygon'},
-      {'name': 'oven', 'shapeType': 'polygon'},
-      {'name': 'toaster', 'shapeType': 'polygon'},
-      {'name': 'sink', 'shapeType': 'polygon'},
-      {'name': 'refrigerator', 'shapeType': 'polygon'},
-      {'name': 'book', 'shapeType': 'polygon'},
-      {'name': 'clock', 'shapeType': 'polygon'},
-      {'name': 'vase', 'shapeType': 'polygon'},
-      {'name': 'scissors', 'shapeType': 'polygon'},
-      {'name': 'teddy bear', 'shapeType': 'polygon'},
-      {'name': 'hair drier', 'shapeType': 'polygon'},
-      {'name': 'toothbrush', 'shapeType': 'polygon'},
-      {'name': 'person', 'shapeType': 'mask'},
-      {'name': 'bicycle', 'shapeType': 'mask'},
-      {'name': 'car', 'shapeType': 'mask'},
-      {'name': 'motorcycle', 'shapeType': 'mask'},
-      {'name': 'bus', 'shapeType': 'mask'},
-      {'name': 'train', 'shapeType': 'mask'},
-      {'name': 'truck', 'shapeType': 'mask'},
-      {'name': 'boat', 'shapeType': 'mask'},
-      {'name': 'traffic light', 'shapeType': 'mask'},
-      {'name': 'fire hydrant', 'shapeType': 'mask'},
-      {'name': 'stop sign', 'shapeType': 'mask'},
-      {'name': 'parking meter', 'shapeType': 'mask'},
-      {'name': 'bench', 'shapeType': 'mask'},
-      {'name': 'bird', 'shapeType': 'mask'},
-      {'name': 'cat', 'shapeType': 'mask'},
-      {'name': 'dog', 'shapeType': 'mask'},
-      {'name': 'horse', 'shapeType': 'mask'},
-      {'name': 'sheep', 'shapeType': 'mask'},
-      {'name': 'cow', 'shapeType': 'mask'},
-      {'name': 'elephant', 'shapeType': 'mask'},
-      {'name': 'bear', 'shapeType': 'mask'},
-      {'name': 'zebra', 'shapeType': 'mask'},
-      {'name': 'giraffe', 'shapeType': 'mask'},
-      {'name': 'backpack', 'shapeType': 'mask'},
-      {'name': 'umbrella', 'shapeType': 'mask'},
-      {'name': 'handbag', 'shapeType': 'mask'},
-      {'name': 'tie', 'shapeType': 'mask'},
-      {'name': 'suitcase', 'shapeType': 'mask'},
-      {'name': 'frisbee', 'shapeType': 'mask'},
-      {'name': 'skis', 'shapeType': 'mask'},
-      {'name': 'snowboard', 'shapeType': 'mask'},
-      {'name': 'sports ball', 'shapeType': 'mask'},
-      {'name': 'kite', 'shapeType': 'mask'},
-      {'name': 'baseball bat', 'shapeType': 'mask'},
-      {'name': 'baseball glove', 'shapeType': 'mask'},
-      {'name': 'skateboard', 'shapeType': 'mask'},
-      {'name': 'surfboard', 'shapeType': 'mask'},
-      {'name': 'tennis racket', 'shapeType': 'mask'},
-      {'name': 'bottle', 'shapeType': 'mask'},
-      {'name': 'wine glass', 'shapeType': 'mask'},
-      {'name': 'cup', 'shapeType': 'mask'},
-      {'name': 'fork', 'shapeType': 'mask'},
-      {'name': 'knife', 'shapeType': 'mask'},
-      {'name': 'spoon', 'shapeType': 'mask'},
-      {'name': 'bowl', 'shapeType': 'mask'},
-      {'name': 'banana', 'shapeType': 'mask'},
-      {'name': 'apple', 'shapeType': 'mask'},
-      {'name': 'sandwich', 'shapeType': 'mask'},
-      {'name': 'orange', 'shapeType': 'mask'},
-      {'name': 'broccoli', 'shapeType': 'mask'},
-      {'name': 'carrot', 'shapeType': 'mask'},
-      {'name': 'hot dog', 'shapeType': 'mask'},
-      {'name': 'pizza', 'shapeType': 'mask'},
-      {'name': 'donut', 'shapeType': 'mask'},
-      {'name': 'cake', 'shapeType': 'mask'},
-      {'name': 'chair', 'shapeType': 'mask'},
-      {'name': 'couch', 'shapeType': 'mask'},
-      {'name': 'potted plant', 'shapeType': 'mask'},
-      {'name': 'bed', 'shapeType': 'mask'},
-      {'name': 'dining table', 'shapeType': 'mask'},
-      {'name': 'toilet', 'shapeType': 'mask'},
-      {'name': 'tv', 'shapeType': 'mask'},
-      {'name': 'laptop', 'shapeType': 'mask'},
-      {'name': 'mouse', 'shapeType': 'mask'},
-      {'name': 'remote', 'shapeType': 'mask'},
-      {'name': 'keyboard', 'shapeType': 'mask'},
-      {'name': 'cell phone', 'shapeType': 'mask'},
-      {'name': 'microwave', 'shapeType': 'mask'},
-      {'name': 'oven', 'shapeType': 'mask'},
-      {'name': 'toaster', 'shapeType': 'mask'},
-      {'name': 'sink', 'shapeType': 'mask'},
-      {'name': 'refrigerator', 'shapeType': 'mask'},
-      {'name': 'book', 'shapeType': 'mask'},
-      {'name': 'clock', 'shapeType': 'mask'},
-      {'name': 'vase', 'shapeType': 'mask'},
-      {'name': 'scissors', 'shapeType': 'mask'},
-      {'name': 'teddy bear', 'shapeType': 'mask'},
-      {'name': 'hair drier', 'shapeType': 'mask'},
-      {'name': 'toothbrush', 'shapeType': 'mask'}
-    ]
-    modelTypes:
-      - name: "Salient Object Detection (Dataset B)"
-        modelGroups:
-          - "Salient Object Detection"
-
-
-
-  - modelName: "TRACER"
-    labels: [
-      {'name': 'person', 'shapeType': 'polygon'},
-      {'name': 'bicycle', 'shapeType': 'polygon'},
-      {'name': 'car', 'shapeType': 'polygon'},
-      {'name': 'airplane', 'shapeType': 'polygon'},
-      {'name': 'bus', 'shapeType': 'polygon'},
-      {'name': 'train', 'shapeType': 'polygon'},
-      {'name': 'truck', 'shapeType': 'polygon'},
-      {'name': 'boat', 'shapeType': 'polygon'},
-      {'name': 'traffic light', 'shapeType': 'polygon'},
-      {'name': 'fire hydrant', 'shapeType': 'polygon'},
-      {'name': 'stop sign', 'shapeType': 'polygon'},
-      {'name': 'parking meter', 'shapeType': 'polygon'},
-      {'name': 'bench', 'shapeType': 'polygon'},
-      {'name': 'bird', 'shapeType': 'polygon'},
-      {'name': 'cat', 'shapeType': 'polygon'},
-      {'name': 'dog', 'shapeType': 'polygon'},
-      {'name': 'horse', 'shapeType': 'polygon'},
-      {'name': 'sheep', 'shapeType': 'polygon'},
-      {'name': 'cow', 'shapeType': 'polygon'},
-      {'name': 'elephant', 'shapeType': 'polygon'},
-      {'name': 'bear', 'shapeType': 'polygon'},
-      {'name': 'zebra', 'shapeType': 'polygon'},
-      {'name': 'giraffe', 'shapeType': 'polygon'},
-      {'name': 'backpack', 'shapeType': 'polygon'},
-      {'name': 'umbrella', 'shapeType': 'polygon'},
-      {'name': 'handbag', 'shapeType': 'polygon'},
-      {'name': 'tie', 'shapeType': 'polygon'},
-      {'name': 'suitcase', 'shapeType': 'polygon'},
-      {'name': 'frisbee', 'shapeType': 'polygon'},
-      {'name': 'skis', 'shapeType': 'polygon'},
-      {'name': 'snowboard', 'shapeType': 'polygon'},
-      {'name': 'sports ball', 'shapeType': 'polygon'},
-      {'name': 'kite', 'shapeType': 'polygon'},
-      {'name': 'baseball bat', 'shapeType': 'polygon'},
-      {'name': 'baseball glove', 'shapeType': 'polygon'},
-      {'name': 'skateboard', 'shapeType': 'polygon'},
-      {'name': 'surfboard', 'shapeType': 'polygon'},
-      {'name': 'tennis racket', 'shapeType': 'polygon'},
-      {'name': 'bottle', 'shapeType': 'polygon'},
-      {'name': 'wine glass', 'shapeType': 'polygon'},
-      {'name': 'cup', 'shapeType': 'polygon'},
-      {'name': 'fork', 'shapeType': 'polygon'},
-      {'name': 'knife', 'shapeType': 'polygon'},
-      {'name': 'spoon', 'shapeType': 'polygon'},
-      {'name': 'bowl', 'shapeType': 'polygon'},
-      {'name': 'banana', 'shapeType': 'polygon'},
-      {'name': 'apple', 'shapeType': 'polygon'},
-      {'name': 'sandwich', 'shapeType': 'polygon'},
-      {'name': 'orange', 'shapeType': 'polygon'},
-      {'name': 'broccoli', 'shapeType': 'polygon'},
-      {'name': 'carrot', 'shapeType': 'polygon'},
-      {'name': 'hot dog', 'shapeType': 'polygon'},
-      {'name': 'pizza', 'shapeType': 'polygon'},
-      {'name': 'donut', 'shapeType': 'polygon'},
-      {'name': 'cake', 'shapeType': 'polygon'},
-      {'name': 'chair', 'shapeType': 'polygon'},
-      {'name': 'couch', 'shapeType': 'polygon'},
-      {'name': 'potted plant', 'shapeType': 'polygon'},
-      {'name': 'bed', 'shapeType': 'polygon'},
-      {'name': 'dining table', 'shapeType': 'polygon'},
-      {'name': 'toilet', 'shapeType': 'polygon'},
-      {'name': 'tv', 'shapeType': 'polygon'},
-      {'name': 'laptop', 'shapeType': 'polygon'},
-      {'name': 'mouse', 'shapeType': 'polygon'},
-      {'name': 'remote', 'shapeType': 'polygon'},
-      {'name': 'keyboard', 'shapeType': 'polygon'},
-      {'name': 'cell phone', 'shapeType': 'polygon'},
-      {'name': 'microwave', 'shapeType': 'polygon'},
-      {'name': 'oven', 'shapeType': 'polygon'},
-      {'name': 'toaster', 'shapeType': 'polygon'},
-      {'name': 'sink', 'shapeType': 'polygon'},
-      {'name': 'refrigerator', 'shapeType': 'polygon'},
-      {'name': 'book', 'shapeType': 'polygon'},
-      {'name': 'clock', 'shapeType': 'polygon'},
-      {'name': 'vase', 'shapeType': 'polygon'},
-      {'name': 'scissors', 'shapeType': 'polygon'},
-      {'name': 'teddy bear', 'shapeType': 'polygon'},
-      {'name': 'hair drier', 'shapeType': 'polygon'},
-      {'name': 'toothbrush', 'shapeType': 'polygon'},
-      {'name': 'person', 'shapeType': 'mask'},
-      {'name': 'bicycle', 'shapeType': 'mask'},
-      {'name': 'car', 'shapeType': 'mask'},
-      {'name': 'airplane', 'shapeType': 'mask'},
-      {'name': 'bus', 'shapeType': 'mask'},
-      {'name': 'train', 'shapeType': 'mask'},
-      {'name': 'truck', 'shapeType': 'mask'},
-      {'name': 'boat', 'shapeType': 'mask'},
-      {'name': 'traffic light', 'shapeType': 'mask'},
-      {'name': 'fire hydrant', 'shapeType': 'mask'},
-      {'name': 'stop sign', 'shapeType': 'mask'},
-      {'name': 'parking meter', 'shapeType': 'mask'},
-      {'name': 'bench', 'shapeType': 'mask'},
-      {'name': 'bird', 'shapeType': 'mask'},
-      {'name': 'cat', 'shapeType': 'mask'},
-      {'name': 'dog', 'shapeType': 'mask'},
-      {'name': 'horse', 'shapeType': 'mask'},
-      {'name': 'sheep', 'shapeType': 'mask'},
-      {'name': 'cow', 'shapeType': 'mask'},
-      {'name': 'elephant', 'shapeType': 'mask'},
-      {'name': 'bear', 'shapeType': 'mask'},
-      {'name': 'zebra', 'shapeType': 'mask'},
-      {'name': 'giraffe', 'shapeType': 'mask'},
-      {'name': 'backpack', 'shapeType': 'mask'},
-      {'name': 'umbrella', 'shapeType': 'mask'},
-      {'name': 'handbag', 'shapeType': 'mask'},
-      {'name': 'tie', 'shapeType': 'mask'},
-      {'name': 'suitcase', 'shapeType': 'mask'},
-      {'name': 'frisbee', 'shapeType': 'mask'},
-      {'name': 'skis', 'shapeType': 'mask'},
-      {'name': 'snowboard', 'shapeType': 'mask'},
-      {'name': 'sports ball', 'shapeType': 'mask'},
-      {'name': 'kite', 'shapeType': 'mask'},
-      {'name': 'baseball bat', 'shapeType': 'mask'},
-      {'name': 'baseball glove', 'shapeType': 'mask'},
-      {'name': 'skateboard', 'shapeType': 'mask'},
-      {'name': 'surfboard', 'shapeType': 'mask'},
-      {'name': 'tennis racket', 'shapeType': 'mask'},
-      {'name': 'bottle', 'shapeType': 'mask'},
-      {'name': 'wine glass', 'shapeType': 'mask'},
-      {'name': 'cup', 'shapeType': 'mask'},
-      {'name': 'fork', 'shapeType': 'mask'},
-      {'name': 'knife', 'shapeType': 'mask'},
-      {'name': 'spoon', 'shapeType': 'mask'},
-      {'name': 'bowl', 'shapeType': 'mask'},
-      {'name': 'banana', 'shapeType': 'mask'},
-      {'name': 'apple', 'shapeType': 'mask'},
-      {'name': 'sandwich', 'shapeType': 'mask'},
-      {'name': 'orange', 'shapeType': 'mask'},
-      {'name': 'broccoli', 'shapeType': 'mask'},
-      {'name': 'carrot', 'shapeType': 'mask'},
-      {'name': 'hot dog', 'shapeType': 'mask'},
-      {'name': 'pizza', 'shapeType': 'mask'},
-      {'name': 'donut', 'shapeType': 'mask'},
-      {'name': 'cake', 'shapeType': 'mask'},
-      {'name': 'chair', 'shapeType': 'mask'},
-      {'name': 'couch', 'shapeType': 'mask'},
-      {'name': 'potted plant', 'shapeType': 'mask'},
-      {'name': 'bed', 'shapeType': 'mask'},
-      {'name': 'dining table', 'shapeType': 'mask'},
-      {'name': 'toilet', 'shapeType': 'mask'},
-      {'name': 'tv', 'shapeType': 'mask'},
-      {'name': 'laptop', 'shapeType': 'mask'},
-      {'name': 'mouse', 'shapeType': 'mask'},
-      {'name': 'remote', 'shapeType': 'mask'},
-      {'name': 'keyboard', 'shapeType': 'mask'},
-      {'name': 'cell phone', 'shapeType': 'mask'},
-      {'name': 'microwave', 'shapeType': 'mask'},
-      {'name': 'oven', 'shapeType': 'mask'},
-      {'name': 'toaster', 'shapeType': 'mask'},
-      {'name': 'sink', 'shapeType': 'mask'},
-      {'name': 'refrigerator', 'shapeType': 'mask'},
-      {'name': 'book', 'shapeType': 'mask'},
-      {'name': 'clock', 'shapeType': 'mask'},
-      {'name': 'vase', 'shapeType': 'mask'},
-      {'name': 'scissors', 'shapeType': 'mask'},
-      {'name': 'teddy bear', 'shapeType': 'mask'},
-      {'name': 'hair drier', 'shapeType': 'mask'},
-      {'name': 'toothbrush', 'shapeType': 'mask'}
-    ]
-    modelTypes:
-      - name: "Salient Object Detection (Dataset B)"
-        modelGroups:
-          - "Salient Object Detection"
-
-
-  - modelName: "KGDet"
+  - modelName: "fashion.keypoint.kgdet"
     labels: [
       {'name': 'short sleeved shirt', 'shapeType': 'skeleton'},
       {'name': 'long sleeved shirt', 'shapeType': 'skeleton'},
@@ -762,16 +307,12 @@ spec:
       - name: "Fashion Keypoint Detection (Dataset G)"
         modelGroups:
           - "Skeleton-based Keypoints Detection"
+    gpu_usage: 0
+    deploy_script: |
+        cd /ssd1/lelong/backup;
+        PROJECT_NAME=cvat
+        ./nuctl deploy --project-name ${PROJECT_NAME} --path "./vbpo/fashion-keypoint/nuclio/" --platform local;
 
-
-  - modelName: "ByteTrack"
-    labels: [
-      {'name': 'person', 'shapeType': 'rectangle'}
-    ]
-    modelTypes:
-      - name: "Person Tracking Model (Dataset H)"
-        modelGroups:
-          - "Tracking Model"
 
 
 
