@@ -1,6 +1,0 @@
-ADMIN_TOKEN='b518d556fc3a15521c31bac604b0be203245f791'
-LABELS = ["road", "sidewalk", "building", "wall", "fence", "pole", "traffic light car", "traffic light pedestrian", "traffic light other", "traffic sign stop", "traffic sign other", "vegetation", "terrain", "sky", "person", "rider", "car", "truck", "bus", "specific car", "train", "motorcycle", "bicycle", "line solid white - ego lane", "line solid yellow - ego lane", "line solid other - ego lane", "line dashed white - ego lane", "line dashed yellow - ego lane", "line dashed other - ego lane", "line solid white - other lane", "line solid yellow - other lane", "line solid other - other lane", "line dashed white - other lane", "line dashed yellow - other lane", "line dashed other - other lane", "road marking crosswalk", "road marking stopline", "road marking arrow", "road marking diamond", "road marking text stop", "road marking text other", "road marking additional line", "road marking zebla zone", "road marking other", "animal", "gate bar", "tunnel", "nature", "smoke", "dynamic", "static on road", "static in air", "invisible", "splash", "cone"] * 2
-SHAPE_TYPE_MAPPING = ['polygon'] * int(len(LABELS) / 2) + ['mask'] * int(len(LABELS) / 2)
-MODEL_NAME = "BEiT"
-MODEL_TYPE = "Click point mode of semantic model (Dataset M)"
-MODEL_GROUP = ["Click Point Semantic"]
