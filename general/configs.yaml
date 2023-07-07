@@ -1,6 +1,6 @@
 settings:
-  ADMIN_TOKEN: '6926078fdbe1e383a7e1bf8d904452c06c1a6c18'
-  BASE_URL: 'http://113.160.226.174:8080/'
+  ADMIN_TOKEN: 'b00ccdab32e0230db87ec43b01f039d3c24f6e0b'
+  BASE_URL: 'http://localhost:8080/'
   DJANGO_LABEL_URL: 'api/ai-labels'
   DJANGO_MODEL_URL: 'api/ai-models' 
   DJANGO_MODEL_TYPE_URL: 'api/ai-model-types'
@@ -110,96 +110,6 @@ spec:
     
     origin_source_path: '/ssd1/lelong/backup/vbpo/yolov7'
 
-  - modelName: "yolov5"
-    labels: [
-      {'name': 'person', 'shapeType': 'rectangle'},
-      {'name': 'bicycle', 'shapeType': 'rectangle'},
-      {'name': 'car', 'shapeType': 'rectangle'},
-      {'name': 'motorcycle', 'shapeType': 'rectangle'},
-      {'name': 'airplane', 'shapeType': 'rectangle'},
-      {'name': 'bus', 'shapeType': 'rectangle'},
-      {'name': 'train', 'shapeType': 'rectangle'},
-      {'name': 'truck', 'shapeType': 'rectangle'},
-      {'name': 'boat', 'shapeType': 'rectangle'},
-      {'name': 'traffic light', 'shapeType': 'rectangle'},
-      {'name': 'fire hydrant', 'shapeType': 'rectangle'},
-      {'name': 'stop sign', 'shapeType': 'rectangle'},
-      {'name': 'parking meter', 'shapeType': 'rectangle'},
-      {'name': 'bench', 'shapeType': 'rectangle'},
-      {'name': 'bird', 'shapeType': 'rectangle'},
-      {'name': 'cat', 'shapeType': 'rectangle'},
-      {'name': 'dog', 'shapeType': 'rectangle'},
-      {'name': 'horse', 'shapeType': 'rectangle'},
-      {'name': 'sheep', 'shapeType': 'rectangle'},
-      {'name': 'cow', 'shapeType': 'rectangle'},
-      {'name': 'elephant', 'shapeType': 'rectangle'},
-      {'name': 'bear', 'shapeType': 'rectangle'},
-      {'name': 'zebra', 'shapeType': 'rectangle'},
-      {'name': 'giraffe', 'shapeType': 'rectangle'},
-      {'name': 'backpack', 'shapeType': 'rectangle'},
-      {'name': 'umbrella', 'shapeType': 'rectangle'},
-      {'name': 'handbag', 'shapeType': 'rectangle'},
-      {'name': 'tie', 'shapeType': 'rectangle'},
-      {'name': 'suitcase', 'shapeType': 'rectangle'},
-      {'name': 'frisbee', 'shapeType': 'rectangle'},
-      {'name': 'skis', 'shapeType': 'rectangle'},
-      {'name': 'snowboard', 'shapeType': 'rectangle'},
-      {'name': 'sports ball', 'shapeType': 'rectangle'},
-      {'name': 'kite', 'shapeType': 'rectangle'},
-      {'name': 'baseball bat', 'shapeType': 'rectangle'},
-      {'name': 'baseball glove', 'shapeType': 'rectangle'},
-      {'name': 'skateboard', 'shapeType': 'rectangle'},
-      {'name': 'surfboard', 'shapeType': 'rectangle'},
-      {'name': 'tennis racket', 'shapeType': 'rectangle'},
-      {'name': 'bottle', 'shapeType': 'rectangle'},
-      {'name': 'wine glass', 'shapeType': 'rectangle'},
-      {'name': 'cup', 'shapeType': 'rectangle'},
-      {'name': 'fork', 'shapeType': 'rectangle'},
-      {'name': 'knife', 'shapeType': 'rectangle'},
-      {'name': 'spoon', 'shapeType': 'rectangle'},
-      {'name': 'bowl', 'shapeType': 'rectangle'},
-      {'name': 'banana', 'shapeType': 'rectangle'},
-      {'name': 'apple', 'shapeType': 'rectangle'},
-      {'name': 'sandwich', 'shapeType': 'rectangle'},
-      {'name': 'orange', 'shapeType': 'rectangle'},
-      {'name': 'broccoli', 'shapeType': 'rectangle'},
-      {'name': 'carrot', 'shapeType': 'rectangle'},
-      {'name': 'hot dog', 'shapeType': 'rectangle'},
-      {'name': 'pizza', 'shapeType': 'rectangle'},
-      {'name': 'donut', 'shapeType': 'rectangle'},
-      {'name': 'cake', 'shapeType': 'rectangle'},
-      {'name': 'chair', 'shapeType': 'rectangle'},
-      {'name': 'couch', 'shapeType': 'rectangle'},
-      {'name': 'potted plant', 'shapeType': 'rectangle'},
-      {'name': 'bed', 'shapeType': 'rectangle'},
-      {'name': 'dining table', 'shapeType': 'rectangle'},
-      {'name': 'toilet', 'shapeType': 'rectangle'},
-      {'name': 'tv', 'shapeType': 'rectangle'},
-      {'name': 'laptop', 'shapeType': 'rectangle'},
-      {'name': 'mouse', 'shapeType': 'rectangle'},
-      {'name': 'remote', 'shapeType': 'rectangle'},
-      {'name': 'keyboard', 'shapeType': 'rectangle'},
-      {'name': 'cell phone', 'shapeType': 'rectangle'},
-      {'name': 'microwave', 'shapeType': 'rectangle'},
-      {'name': 'oven', 'shapeType': 'rectangle'},
-      {'name': 'toaster', 'shapeType': 'rectangle'},
-      {'name': 'sink', 'shapeType': 'rectangle'},
-      {'name': 'refrigerator', 'shapeType': 'rectangle'},
-      {'name': 'book', 'shapeType': 'rectangle'},
-      {'name': 'clock', 'shapeType': 'rectangle'},
-      {'name': 'vase', 'shapeType': 'rectangle'},
-      {'name': 'scissors', 'shapeType': 'rectangle'},
-      {'name': 'teddy bear', 'shapeType': 'rectangle'},
-      {'name': 'hair drier', 'shapeType': 'rectangle'},
-      {'name': 'toothbrush', 'shapeType': 'rectangle'}
-    ]
-    modelTypes:
-      - name: "Common Object Detection (Dataset A)"
-        modelGroups:
-          - "Bounding Box Object Detection"
-    gpu_usage: 0
-    deploy_script: 
-    origin_source_path: '/ssd1/lelong/backup/vbpo/yolov5'
 
   - modelName: "combine-licence-plate-detection"
     labels: [
