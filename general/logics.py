@@ -25,14 +25,15 @@ def send_model(url, headers, data):
     return requests.post(url, json=data, headers=headers)
 
 async def handle_model(url_label, url_model, headers, labels, 
-                shape_type_mappings, model_name, gpu_usage, deploy_script):
+                shape_type_mappings, model_name, gpu_usage, deploy_script, origin_source_path):
     print("handle_model: ", model_name)
     labels = await get_model_labels_async(url_label, headers, labels, shape_type_mappings)
     datas = {
         'name': model_name,
         'labels': labels,
         'gpu_usage': gpu_usage,
-        'deploy_script': deploy_script
+        'deploy_script': deploy_script,
+        'origin_source_path': origin_source_path
     }
     response = await asyncio.to_thread(send_model, url_model, headers, datas)
     return response

@@ -36,6 +36,7 @@ class ModelInfo:
     modelTypes: List[Dict] = field(default_factory=list)
     gpu_usage: int = 0
     deploy_script: str = ""
+    origin_source_path: str = ""
 
     def __str__(self) -> str:
         return self.name 
@@ -48,6 +49,9 @@ class ModelInfo:
     
     def getDeployScript(self):
         return self.deploy_script 
+    
+    def getOriginSourcePath(self):
+        return self.origin_source_path
     
     def getModelTypeGroupMapping(self) -> Tuple[List[str], List[str]]:
         model_types = []
@@ -94,12 +98,14 @@ def getListModelInfo(file_path) -> Tuple[BaseSettings, List[ModelInfo]]:
         elif key == 'spec':
             for info in value:
                 script = info['deploy_script'] if info['deploy_script'] else ""
+                origin_source_path = info['origin_source_path'] if info['origin_source_path'] else ""
                 modelInfo = ModelInfo(
                     name=info['modelName'],
                     labels=info['labels'],
                     modelTypes=info['modelTypes'],
                     gpu_usage=info['gpu_usage'],
-                    deploy_script=script
+                    deploy_script=script,
+                    origin_source_path=origin_source_path
                 )
                 model_objs.append(modelInfo)
         else:
