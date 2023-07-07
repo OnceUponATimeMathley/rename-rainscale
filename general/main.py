@@ -21,11 +21,12 @@ async def insert_data(baseSettings: BaseSettings, model_info: ModelInfo):
     deploy_script = model_info.getDeployScript()
 
     model_types, model_groups = model_info.getModelTypeGroupMapping()
+    origin_source_path = model_info.getOriginSourcePath()
     print("RUN", model_name)
     await run_sequence(
         handle_labels(url_label, headers, labels, shape_type_mappings),
         handle_model(url_label, url_model, headers, labels, 
-                             shape_type_mappings, model_name, gpu_usage, deploy_script),
+                             shape_type_mappings, model_name, gpu_usage, deploy_script, origin_source_path),
         handle_model_types(url_model, url_model_type, 
                                  headers, model_name, model_types),
         handle_model_groups(url_model_type, url_model_group, 
